@@ -101,12 +101,9 @@ jobs:
         with:
           name: image
       - run: docker load -i $GITHUB_WORKSPACE/image.tar
-      - uses: aquasecurity/trivy-action@0.28.0
-        with:
-          image-ref: ${{ env.IMAGE }}:${{ github.sha }}
-          severity: HIGH,CRITICAL
-          ignore-unfixed: true
-          exit-code: "1"           # fail the job when something is found
+      - name: Trivy scan (fails on fixable HIGH / CRITICAL)
+        run: |
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 $IMAGE:${{ github.sha }}
 
   # 8. Security gate - one explicit decision point
   security-gate:
