@@ -155,6 +155,8 @@ jobs:
           name: image
       - run: docker load -i $GITHUB_WORKSPACE/image.tar
       - uses: helm/kind-action@v1
+        with:
+          cluster_name: kind
       - name: Load the scanned image into the cluster
         run: kind load docker-image $IMAGE:${{ github.sha }}
       - name: Point manifest at the new image
